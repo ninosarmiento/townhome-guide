@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f7f2ec" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Welcome · Modern Townhome Seattle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f2ec;
+    --card: #ffffff;
+    --row: #f3efea;
+    --ink: #2b2825;
+    --muted: #6d665f;
+    --accent: #4f5d43;
+    --soft: #efe4d6;
+    --line: #e7dfd5;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; color-scheme: light; -webkit-tap-highlight-color: transparent; }
+  body.open { overflow: hidden; }
+  body {
+    font-family: "DM Sans", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  .app { max-width: 480px; margin: 0 auto; padding: 0 0 calc(110px + env(safe-area-inset-bottom)); }
+  .serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+  .kicker { letter-spacing: .28em; text-transform: uppercase; font-size: 12px; color: var(--ink); text-align: center; }
+
+  .page { display: none; animation: fade .35s ease; }
+  .page.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .hero { position: relative; height: 280px; overflow: hidden; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, var(--bg) 100%); }
+  .home-title { text-align: center; margin-top: -40px; position: relative; z-index: 1; padding: 0 20px 22px; }
+  .home-title h1 { font-size: 64px; line-height: 1; }
+  .home-title p.sub { margin-top: 10px; }
+  .home-title .prop { margin-top: 14px; font-size: 14px; color: var(--muted); }
+  .menu { list-style: none; }
+  .menu a {
+    display: flex; align-items: center; gap: 18px;
+    padding: 18px 26px; margin-bottom: 14px;
+    background: var(--row); color: inherit; text-decoration: none;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    transition: background .2s;
+  }
+  .menu a:active, .menu a:hover { background: #ebe5dd; }
+  .menu svg.ic { width: 28px; height: 28px; flex: none; stroke: var(--ink); stroke-width: 1.2; fill: none; }
+  .menu .txt { flex: 1; }
+  .menu .txt b { display: block; font-weight: 600; font-size: 15px; }
+  .menu .txt span { font-size: 14px; color: var(--muted); }
+  .menu .chev { width: 18px; height: 18px; stroke: var(--ink); fill: none; stroke-width: 1.4; }
+
+  .section { padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); }
+  .section > .kicker { margin: 8px 0 18px; }
+  .title-card { background: var(--card); border-radius: var(--radius); padding: 18px; text-align: center; margin-bottom: 14px; }
+  .title-card h2 { font-size: 40px; line-height: 1.1; }
+  .photo { width: 100%; height: 190px; object-fit: cover; border-radius: var(--radius); display: block; margin-bottom: 14px; background: var(--soft); }
+  .card { background: var(--card); border-radius: var(--radius); padding: 22px 20px 22px 54px; margin: 0 0 14px 12px; position: relative; }
+  .card.plain { padding: 22px 20px; text-align: center; margin-left: 0; }
+  .card h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+  .card p, .card li { font-size: 15px; }
+  .card p + p { margin-top: 8px; }
+  .card ul { list-style: none; }
+  .card li { padding: 3px 0; }
+  .card .badge {
+    position: absolute; left: -12px; top: 18px; width: 50px; height: 50px; border-radius: 50%;
+    background: var(--soft); display: grid; place-items: center;
+  }
+  .card .badge svg { width: 24px; height: 24px; stroke: var(--ink); stroke-width: 1.3; fill: none; }
+  .card a { color: var(--accent); font-weight: 500; }
+  .card li a, .card p a { display: inline-block; padding: 8px 0; margin: -4px 0; }
+  .note { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  .arch { background: var(--card); border-radius: 200px 200px var(--radius) var(--radius); padding: 60px 20px 36px; text-align: center; margin-bottom: 14px; }
+  .arch .ring { width: 74px; height: 74px; border-radius: 50%; border: 1.5px solid #d8cbbb; display: grid; place-items: center; margin: 0 auto 18px; }
+  .arch .ring svg { width: 40px; height: 40px; stroke: #b9a891; stroke-width: 1.3; fill: none; }
+  .arch h2 { font-size: 58px; line-height: 1; }
+  .creds { background: var(--card); border-radius: var(--radius); padding: 30px 24px; text-align: center; }
+  .creds .label { letter-spacing: .25em; font-size: 14px; text-transform: uppercase; margin: 0 0 10px; }
+  .creds .label:not(:first-child) { margin-top: 24px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+    background: var(--ink); color: #fff; border: 0; border-radius: 999px;
+    padding: 14px 26px; min-width: 220px; max-width: 100%; min-height: 44px; font: 600 15px/1.3 "DM Sans", sans-serif; letter-spacing: .06em; cursor: pointer;
+    word-break: break-all; -webkit-user-select: all; user-select: all;
+  }
+  .pill svg { width: 14px; height: 14px; flex: none; stroke: #fff; fill: none; stroke-width: 2; opacity: .7; }
+  .speed { margin-top: 22px; font-size: 13px; color: var(--muted); }
+
+  .gallery { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -18px 14px; padding: 0 18px; scrollbar-width: none; }
+  .gallery::-webkit-scrollbar { display: none; }
+  .gallery figure { flex: 0 0 82%; scroll-snap-align: center; }
+  .gallery img { width: 100%; height: 200px; object-fit: cover; border-radius: var(--radius); display: block; }
+  .gallery figcaption { font-size: 12px; color: var(--muted); text-align: center; margin-top: 6px; }
+
+  .btn {
+    display: block; text-align: center; background: var(--accent); color: #fff !important; text-decoration: none;
+    padding: 13px; border-radius: 999px; font-weight: 600; margin-top: 14px;
+  }
+  .btn.ghost { background: transparent; color: var(--ink) !important; border: 1.5px solid var(--ink); }
+
+  .back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 15px; min-height: 44px; padding-right: 16px; }
+  .back svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 30px 20px 0; }
+
+  .fab {
+    position: fixed; right: max(18px, calc(50% - 222px)); bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 20;
+    width: 56px; height: 56px; border-radius: 50%; background: var(--ink); border: 0;
+    display: grid; place-items: center; box-shadow: 0 6px 18px rgba(0,0,0,.25); cursor: pointer;
+  }
+  .fab svg { width: 26px; height: 26px; stroke: #fff; stroke-width: 1.5; fill: none; }
+  .drawer-bg { position: fixed; inset: 0; background: rgba(30,26,22,.4); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 30; }
+  .drawer {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 31; max-width: 480px; margin: 0 auto;
+    background: var(--bg); border-radius: 22px 22px 0 0; padding: 18px 0 calc(20px + env(safe-area-inset-bottom)); max-height: 85vh; max-height: 85dvh; overflow-y: auto; overscroll-behavior: contain;
+    transform: translateY(105%); transition: transform .3s ease;
+  }
+  .drawer .grab { width: 40px; height: 4px; border-radius: 4px; background: #cfc4b6; margin: 0 auto 14px; }
+  .drawer .menu a { margin-bottom: 6px; padding: 12px 26px; }
+  body.open .drawer-bg { opacity: 1; pointer-events: auto; }
+  body.open .drawer { transform: none; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); opacity: 0;
+    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 999px; font-size: 14px; transition: all .25s; z-index: 40;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media print {
+    @page { size: letter; margin: 0.5in; }
+    html, body { background: #fff; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 12px; }
+    .app { max-width: none; padding: 0; }
+    .page { display: block !important; animation: none; break-before: page; }
+    #p-home { break-before: auto; }
+    .fab, .drawer, .drawer-bg, .toast, .back, .menu .chev, footer { display: none !important; }
+    .hero { height: 3.4in; border-radius: 14px; }
+    .home-title h1 { font-size: 72px; }
+    .menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .menu a { margin: 0; border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+    .section { padding: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 14px; align-content: start; }
+    .section > :not(.card), .section > .card.plain { grid-column: 1 / -1; }
+    .section > .card { margin-left: 12px; }
+    .print-hide { display: none !important; }
+    .section > .kicker { margin-top: 0; }
+    .title-card { background: var(--row); }
+    .title-card h2 { font-size: 38px; }
+    .photo { height: 3in; }
+    .card { background: var(--row); break-inside: avoid; padding: 18px 18px 18px 50px; margin-bottom: 12px; }
+    .card.plain { background: var(--row); }
+    .card h3 { font-size: 16px; }
+    .card p, .card li { font-size: 13.5px; }
+    .card li a, .card p a { padding: 0; margin: 0; text-decoration: none; }
+    .btn { display: none; }
+    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; overflow: visible; margin: 0 0 10px; padding: 0; }
+    .gallery img { height: 1.5in; }
+    .gallery figure:nth-child(n+7) { display: none; }
+    .arch { background: var(--row); padding: 60px 20px 36px; border-radius: 3in 3in 14px 14px; }
+    .arch h2 { font-size: 80px; }
+    .creds { background: var(--row); padding: 40px 24px; }
+    .pill { font-size: 20px; padding: 18px 40px; min-width: 3.5in; }
+    .creds .label { font-size: 16px; }
+    .speed { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<button class="fab" id="fab" aria-label="Open menu">
+  <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+</button>
+<div class="drawer-bg" id="drawerBg"></div>
+<nav class="drawer" id="drawer" aria-label="Guide sections"><div class="grab"></div><ul class="menu" id="drawerMenu"></ul></nav>
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+/* ============================================================
+   EDIT YOUR PROPERTY DETAILS HERE
+   Anything marked TODO should be filled in before printing the QR.
+   ============================================================ */
+const CONFIG = {
+  propertyName: "Modern Townhome",
+  tagline: "AC · Free Parking · Near UW & Hospitals",
+  hostName: "Ana Lea",
+  hostPhone: "",                    // TODO e.g. "+1 206 555 0123" (leave blank to hide call/text buttons)
+  airbnbUrl: "https://www.airbnb.com/rooms/53690611",
+
+  wifiNetwork: "YourNetworkName",   // TODO
+  wifiPassword: "YourPassword",     // TODO
+  wifiSpeed: "625 Mbps",
+
+  checkInTime: "4:00 PM",           // TODO confirm
+  checkOutTime: "11:00 AM",         // TODO confirm
+  doorCodeNote: "Your personal smart-lock code is sent in the Airbnb app on the day of arrival.",
+
+  // Replace with your exact street address for accurate directions.
+  address: "",                      // TODO e.g. "1234 NE Example St, Seattle, WA 98105"
+  lat: 47.6726,
+  lng: -122.2669,
+};
+
+const IMG = id => `https://a0.muscache.com/im/pictures/miso/Hosting-53690611/original/${id}.jpeg?im_w=960`;
+const PHOTOS = {
+  hero:     IMG("e9d14dbb-93ab-49ce-9e6b-2ad3ab31cd3c"),
+  living2:  IMG("699cf8be-e67a-4ba5-bb9b-b81c60ad17c4"),
+  kitchen:  IMG("996bb506-8b82-439b-a529-2987318899b3"),
+  dining:   IMG("5f0ea1c5-adf3-4401-826b-1c982d7ad765"),
+  bed2:     IMG("14fb8334-75c0-4626-932b-ca33b213d0c1"),
+  bed3:     IMG("c8646a4b-9ae5-45c2-962f-2a405d856667"),
+  primary:  IMG("98db15ff-5954-4032-9374-2965b86c12c1"),
+  bath:     IMG("9776a184-9102-4019-ab86-0fd9553d41a4"),
+  workspace:IMG("6a701371-11ed-44ea-a40a-5577a4d802cd"),
+  laundry:  IMG("7c89ed11-7b76-44f8-bb3e-4e69fc3db1f7"),
+  exterior: IMG("f8d6ae25-2e59-41b6-9b5e-47b227e4cce0"),
+  exterior2:IMG("50997a24-d788-4062-82ce-f67e6ec01de9"),
+  parking:  IMG("c14bc0c8-6880-44be-8808-e7f52ecd61f2"),
+  extra:    "https://a0.muscache.com/im/pictures/ae3d2ae9-39d7-490e-8ec2-79d429ee7b72.jpg?im_w=960",
+};
+
+const I = {
+  wifi: '<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/>',
+  key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 20 3m-3 3 3 3m-6 0 2 2"/>',
+  book: '<path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M5 18a2 2 0 0 1 2-2h11"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  map: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/>',
+  scroll: '<path d="M8 4h11v13a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-1h11v1a3 3 0 0 0 3 3M8 4a2 2 0 0 0-2 2v10M8 4a2 2 0 0 1 2 2v1H6"/><path d="M11 9h5M11 12h5"/>',
+  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  bus: '<rect x="5" y="3" width="14" height="15" rx="2"/><path d="M5 11h14M8 18v3M16 18v3"/><circle cx="8.5" cy="14.5" r=".8"/><circle cx="15.5" cy="14.5" r=".8"/>',
+  pot: '<path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM2 10h20M9 6c0-1 1-1 1-2M14 6c0-1 1-1 1-2"/>',
+  bed: '<path d="M3 18V7M3 14h18v4M21 14v-3a3 3 0 0 0-3-3h-8v6"/><circle cx="6.5" cy="11" r="1.5"/>',
+  snow: '<path d="M12 2v20M4 7l16 10M20 7 4 17"/>',
+  car: '<path d="M5 16h14v-4l-2-5H7l-2 5zM5 16v3M19 16v3"/><circle cx="8" cy="13" r=".8"/><circle cx="16" cy="13" r=".8"/>',
+  tree: '<path d="M12 22v-6M7 16h10l-5-13z"/>',
+  fork: '<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 7h3v11"/>',
+  cart: '<path d="M3 4h2l2.5 11h11L21 7H7"/><circle cx="9" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/>',
+  cross: '<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  wash: '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4.5"/><path d="M7 6h.01M10 6h.01"/>',
+  tv: '<rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M8 21h8"/>',
+  ear: '<path d="M6 9a6 6 0 1 1 12 0c0 3-3 4-3 7a3 3 0 0 1-6 0"/><path d="M10 9a2 2 0 0 1 4 0"/>',
+  stairs: '<path d="M3 20h5v-5h5v-5h5V5h3"/>',
+  cam: '<rect x="3" y="7" width="13" height="10" rx="1.5"/><path d="m16 11 5-3v8l-5-3"/>',
+  nosmoke: '<circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8M7 13h7"/>',
+  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/>',
+  people: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 4.5a3 3 0 0 1 0 6M18 14a6 6 0 0 1 3 6"/>',
+  paw: '<circle cx="6" cy="10" r="1.8"/><circle cx="10" cy="6" r="1.8"/><circle cx="14" cy="6" r="1.8"/><circle cx="18" cy="10" r="1.8"/><path d="M8 17c0-3 2-5 4-5s4 2 4 5-2 3-4 3-4 0-4-3z"/>',
+  shield: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+  chev: '<path d="m9 5 7 7-7 7"/>',
+  back: '<path d="m15 5-7 7 7 7"/>',
+  door: '<path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="15" cy="12" r=".9"/>',
+};
+const svg = (k, cls = "") => `<svg class="${cls}" viewBox="0 0 24 24">${I[k]}</svg>`;
+
+const mapsQuery = () => encodeURIComponent(CONFIG.address || `${CONFIG.lat},${CONFIG.lng}`);
+const gmaps = q => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+const link = (label, q) => `<a href="${gmaps(q)}" target="_blank" rel="noopener">${label}</a>`;
+const tel = s => s.replace(/[^\d+]/g, "");
+
+const card = (icon, title, body) =>
+  `<div class="card"><div class="badge">${svg(icon)}</div><h3>${title}</h3>${body}</div>`;
+const header = (kicker, title, img) =>
+  `<div class="section"><a href="#home" class="back">${svg("back")} Home</a>
+   <p class="kicker">${kicker}</p>
+   <div class="title-card"><h2 class="serif">${title}</h2></div>
+   ${img ? `<img class="photo" src="${img}" alt="" loading="lazy">` : ""}`;
+
+const SECTIONS = [
+  { id: "wifi", icon: "wifi", title: "Wi-Fi", sub: "Network and password", render: () => `
+    <div class="section"><a href="#home" class="back">${svg("back")} Home</a>
+      <div class="arch" style="margin-top:14px">
+        <div class="ring">${svg("wifi")}</div>
+        <h2 class="serif">Free Wifi</h2>
+      </div>
+      <div class="creds">
+        <p class="label">Network</p>
+        <button class="pill" data-copy="${CONFIG.wifiNetwork}">${CONFIG.wifiNetwork} ${svg("copy")}</button>
+        <p class="label">Password</p>
+        <button class="pill" data-copy="${CONFIG.wifiPassword}">${CONFIG.wifiPassword} ${svg("copy")}</button>
+        <p class="speed">Blazing fast · ${CONFIG.wifiSpeed}<br>Tap to copy</p>
+      </div>
+    </div>` },
+
+  { id: "checkin", icon: "key", title: "Check In/Out", sub: "Arrival and departure", render: () => `
+    ${header("Check In / Out", "Arrival &amp; Departure", PHOTOS.exterior)}
+      ${card("clock", "Times", `<ul>
+        <li>Check-in · <b>after ${CONFIG.checkInTime}</b></li>
+        <li>Checkout · <b>before ${CONFIG.checkOutTime}</b></li></ul>
+        <p class="note">Need an early check-in or late checkout? Message us — we'll do our best.</p>`)}
+      ${card("door", "Self Check-in", `<p>The home has a smart lock for easy self check-in.</p><p>${CONFIG.doorCodeNote}</p>`)}
+      ${card("car", "Parking", `<p>Park in the <b>1st spot at the back of the building</b>. The dedicated spot is 8 ft wide — best for compact vehicles. Free street parking is available for larger cars.</p>`)}
+      <img class="photo print-hide" src="${PHOTOS.parking}" alt="Parking spot behind the building" loading="lazy">
+      ${card("scroll", "Before You Leave", `<ul>
+        <li>· Load and start the dishwasher</li>
+        <li>· Take out trash &amp; recycling</li>
+        <li>· Turn off lights, TVs and AC</li>
+        <li>· Close windows and lock the door</li></ul>
+        <p class="note">No need to strip beds or do laundry. Safe travels!</p>`)}
+    </div>` },
+
+  { id: "amenities", icon: "book", title: "Amenities", sub: "What we provide", render: () => `
+    ${header("Amenities", "About the House")}
+      <div class="gallery">
+        ${[["hero","Living room"],["kitchen","Kitchen"],["dining","Dining for six"],["primary","Primary bedroom · King"],["bed2","Bedroom 2 · Queen"],["bed3","Bedroom 3 · Queen"],["bath","Bathroom"],["workspace","Workspace"],["laundry","Washer &amp; dryer"]]
+          .map(([k,c]) => `<figure><img src="${PHOTOS[k]}" alt="${c}" loading="lazy"><figcaption>${c}</figcaption></figure>`).join("")}
+      </div>
+      <div class="card plain"><p>A spacious 3-bedroom, 2-bath, 3-story townhome — a calm base for visiting UW, Seattle Children's or UW Medical Center, and exploring the city.</p></div>
+      ${card("stairs", "Floor Plan", `<ul>
+        <li><b>1st floor</b> · Kitchen, living room with 58" smart TV, dining for six, AC</li>
+        <li><b>2nd floor</b> · Two bedrooms with Tuft &amp; Needle Queen beds, full bath with tub</li>
+        <li><b>3rd floor</b> · Primary bedroom with King bed, smart TV, AC, private bath with walk-in shower, laundry</li></ul>`)}
+      ${card("pot", "Kitchen &amp; Coffee", `<p>Cuisinart dual-brew coffee maker, bean grinder, selection of teas and an electric kettle.</p>
+        <p>Stainless steel appliances, dishwasher, pots, pans &amp; bakeware, blender, toaster, Crock-Pot and digital air-fry oven.</p>`)}
+      ${card("bed", "What We Provide", `<p>Fresh linens, extra pillows and blankets, towels, shampoo, conditioner, body wash, hair dryer, iron, hangers and blackout shades in the bedrooms.</p>`)}
+      ${card("tv", "Entertainment", `<p>Smart TVs in the living room and primary bedroom with complimentary YouTube TV.</p>`)}
+      ${card("wash", "Laundry", `<p>Full-size washer and dryer on the 3rd floor — free to use.</p>`)}
+      ${card("snow", "Climate", `<p>Ductless AC in the living room and primary bedroom, managed by a Sensibo smart system. Message us any time to adjust the temperature.</p>`)}
+    </div>` },
+
+  { id: "know", icon: "info", title: "Things to Know", sub: "Helpful tips", render: () => `
+    ${header("Things to Know", "Helpful Tips", PHOTOS.living2)}
+      ${card("ear", "Street Noise", `<p>We've added soundproofing, but some traffic noise may be audible. Earplugs and white-noise machines are provided for light sleepers.</p>`)}
+      ${card("stairs", "Stairs", `<p>The home is on three levels with stairs between floors and is not wheelchair accessible.</p>`)}
+      ${card("car", "Parking Size", `<p>The dedicated spot is 8 ft wide. Larger vehicles should use free street parking nearby.</p>`)}
+      ${card("cam", "Safety &amp; Privacy", `<p>Exterior cameras cover the front and side doors. A decibel-only sound monitor (no audio recording) helps keep noise in check.</p>`)}
+      ${card("cross", "Emergencies", `<ul>
+        <li>Emergency · <a href="tel:911">911</a></li>
+        <li>${link("Seattle Children's Hospital", "Seattle Children's Hospital, 4800 Sand Point Way NE, Seattle")} · ~3 min</li>
+        <li>${link("UW Medical Center", "UW Medical Center, 1959 NE Pacific St, Seattle")} · ~3 mi</li></ul>`)}
+    </div>` },
+
+  { id: "directions", icon: "pin", title: "Directions", sub: "Finding us", render: () => `
+    ${header("Directions", "Finding Us", PHOTOS.parking)}
+      ${card("pin", "Location", `<p>${CONFIG.address || "NE Seattle, near Magnuson Park &amp; Seattle Children's — exact address is in your Airbnb reservation."}</p>
+        <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${mapsQuery()}" target="_blank" rel="noopener">Open in Google Maps</a>
+        <a class="btn ghost" href="https://maps.apple.com/?daddr=${mapsQuery()}" target="_blank" rel="noopener">Open in Apple Maps</a>`)}
+      ${card("car", "Driving", `<ul>
+        <li>Sea-Tac Airport · ~30–40 min via I-5</li>
+        <li>Downtown Seattle · ~14 min</li>
+        <li>Park in the 1st spot behind the building</li></ul>`)}
+      ${card("bus", "Transit", `<p>Bus stops for <b>Routes 75 &amp; 79</b> are steps away. From the airport, take Link light rail to U District or UW Station, then connect by bus or rideshare.</p>
+        <p class="note">Plan trips with <a href="https://kingcounty.gov/en/dept/metro" target="_blank" rel="noopener">King County Metro</a>.</p>`)}
+    </div>` },
+
+  { id: "explore", icon: "map", title: "Explore the Area", sub: "Eat, see and do", render: () => `
+    ${header("Explore the Area", "Discover", PHOTOS.exterior2)}
+      ${card("tree", "Outdoors", `<ul>
+        <li>${link("Magnuson Park", "Warren G. Magnuson Park, Seattle")} · 5 min walk</li>
+        <li>${link("Lake Washington beach", "Magnuson Park Swimming Beach, Seattle")} · in Magnuson Park</li>
+        <li>${link("Burke-Gilman Trail", "Burke-Gilman Trail, Seattle")} · bike / walk</li>
+        <li>${link("Union Bay Natural Area", "Union Bay Natural Area, Seattle")} · 5 min drive</li>
+        <li>${link("Matthews Beach Park", "Matthews Beach Park, Seattle")} · 8 min drive</li></ul>`)}
+      ${card("map", "Things to Do", `<ul>
+        <li>${link("University of Washington", "University of Washington, Seattle")} · 5 min</li>
+        <li>${link("Burke Museum", "Burke Museum, Seattle")} · 8 min</li>
+        <li>${link("University Village", "University Village, Seattle")} · shopping, 8 min</li>
+        <li>${link("Green Lake", "Green Lake Park, Seattle")} · 15 min</li>
+        <li>${link("Pike Place Market", "Pike Place Market, Seattle")} · 7 mi</li>
+        <li>${link("Space Needle", "Space Needle, Seattle")} · 20 min</li></ul>`)}
+      ${card("fork", "Eat &amp; Drink", `<ul>
+        <li>${link("Magnuson Cafe &amp; Brewery", "Magnuson Cafe & Brewery, Seattle")} · in the park</li>
+        <li>${link("University Village restaurants", "restaurants University Village Seattle")}</li>
+        <li>${link("Coffee nearby", "coffee near Sand Point Way NE Seattle")}</li>
+        <li>${link("Restaurants nearby", "restaurants near Laurelhurst Seattle")}</li></ul>`)}
+      ${card("cart", "Groceries &amp; Essentials", `<ul>
+        <li>${link("Metropolitan Market Sand Point", "Metropolitan Market Sand Point, Seattle")}</li>
+        <li>${link("QFC University Village", "QFC University Village, Seattle")}</li>
+        <li>${link("Pharmacy nearby", "pharmacy near Sand Point Way NE Seattle")}</li></ul>`)}
+    </div>` },
+
+  { id: "rules", icon: "scroll", title: "House Rules", sub: "For a pleasant stay", render: () => `
+    ${header("House Rules", "For a Pleasant Stay", PHOTOS.dining)}
+      ${card("nosmoke", "No Smoking", `<p>Strictly no smoking or vaping indoors, including e-cigarettes.</p>`)}
+      ${card("moon", "Quiet Hours", `<p>10:00 PM – 8:00 AM. Please be mindful of neighbors.</p>`)}
+      ${card("people", "No Parties", `<p>No parties or events. Registered guests only (max 7), unless arranged in advance.</p>`)}
+      ${card("paw", "No Pets", `<p>Service animals only. A $500 fine applies to unauthorized pets.</p>`)}
+      ${card("shield", "No Digital Piracy", `<p>Illegal downloading or streaming on our network is prohibited ($500 fine).</p>`)}
+      <div class="card plain"><p>Thank you for treating our home like your own. ♡</p></div>
+    </div>` },
+
+  { id: "contact", icon: "phone", title: "Contact Host", sub: `Reach ${CONFIG.hostName}`, render: () => `
+    ${header("Contact", "We're Here to Help")}
+      ${card("phone", `Your host, ${CONFIG.hostName}`, `<p>Questions, temperature changes, or anything you need — just reach out.</p>
+        ${CONFIG.hostPhone ? `<a class="btn" href="tel:${tel(CONFIG.hostPhone)}">Call ${CONFIG.hostPhone}</a>
+        <a class="btn ghost" href="sms:${tel(CONFIG.hostPhone)}">Send a Text</a>` : ""}
+        <a class="btn ${CONFIG.hostPhone ? "ghost" : ""}" href="${CONFIG.airbnbUrl}" target="_blank" rel="noopener">Message on Airbnb</a>`)}
+      ${card("cross", "Emergency", `<p>For emergencies call <a href="tel:911">911</a> first, then let us know.</p>`)}
+    </div>` },
+];
+
+const menuHTML = () => SECTIONS.map(s => `
+  <li><a href="#${s.id}">${svg(s.icon, "ic")}
+    <span class="txt"><b>${s.title}</b><span>${s.sub}</span></span>${svg("chev", "chev")}</a></li>`).join("");
+
+const home = () => `
+  <div class="hero"><img src="${PHOTOS.hero}" alt="Living room"></div>
+  <div class="home-title">
+    <h1 class="serif">Welcome</h1>
+    <p class="kicker sub">Enjoy your stay</p>
+    <p class="prop">${CONFIG.propertyName} · Seattle<br>${CONFIG.tagline}</p>
+  </div>
+  <ul class="menu">${menuHTML()}</ul>
+  <footer>Hosted with care by ${CONFIG.hostName}</footer>`;
+
+document.getElementById("app").innerHTML =
+  `<section class="page" id="p-home">${home()}</section>` +
+  SECTIONS.map(s => `<section class="page" id="p-${s.id}">${s.render()}<footer>${CONFIG.propertyName} · Seattle</footer></section>`).join("");
+document.getElementById("drawerMenu").innerHTML =
+  `<li><a href="#home">${svg("door", "ic")}<span class="txt"><b>Home</b><span>Back to start</span></span>${svg("chev","chev")}</a></li>` + menuHTML();
+
+function route() {
+  const id = (location.hash || "#home").slice(1);
+  const page = document.getElementById("p-" + id) || document.getElementById("p-home");
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p === page));
+  document.body.classList.remove("open");
+  window.scrollTo(0, 0);
+}
+addEventListener("hashchange", route);
+route();
+
+const toggle = () => document.body.classList.toggle("open");
+document.getElementById("fab").onclick = toggle;
+document.getElementById("drawerBg").onclick = toggle;
+
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-copy]");
+  if (!b) return;
+  try { await navigator.clipboard.writeText(b.dataset.copy); }
+  catch {
+    // iOS Safari fallback (clipboard API requires HTTPS)
+    const t = document.createElement("textarea");
+    t.value = b.dataset.copy; t.readOnly = true;
+    t.style.cssText = "position:fixed;top:0;opacity:0;font-size:16px";
+    document.body.appendChild(t); t.focus(); t.setSelectionRange(0, t.value.length);
+    document.execCommand("copy"); t.remove();
+  }
+  const toast = document.getElementById("toast");
+  toast.classList.add("show"); setTimeout(() => toast.classList.remove("show"), 1400);
+});
+</script>
+</body>
+</html>

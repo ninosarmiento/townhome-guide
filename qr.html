@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Printable QR Sign</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+  body { font-family: "DM Sans", sans-serif; background: #eee; margin: 0; padding: 24px; color: #2b2825; }
+  .controls { max-width: 520px; margin: 0 auto 20px; display: flex; gap: 8px; }
+  .controls input { flex: 1; padding: 10px; font-size: 15px; border: 1px solid #ccc; border-radius: 8px; }
+  .controls button { padding: 10px 16px; border: 0; border-radius: 8px; background: #2b2825; color: #fff; cursor: pointer; }
+  .sign { width: 5in; min-height: 7in; margin: 0 auto; background: #f7f2ec; padding: .5in; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,.15); }
+  .sign h1 { font-family: "Instrument Serif", serif; font-weight: 400; font-size: 64px; margin: 0; line-height: 1; }
+  .kicker { letter-spacing: .3em; text-transform: uppercase; font-size: 12px; margin: 10px 0 30px; }
+  #qr { background: #fff; padding: 18px; border-radius: 16px; display: inline-block; }
+  #qr img { width: 2.6in; height: 2.6in; display: block; image-rendering: pixelated; }
+  .sign p { font-size: 15px; margin: 24px 0 6px; }
+  .sign small { color: #6d665f; }
+  @media print { body { background: #fff; padding: 0; } .controls { display: none; } .sign { box-shadow: none; } }
+</style>
+</head>
+<body>
+<div class="controls">
+  <input id="url" placeholder="https://your-guide-url" />
+  <button onclick="draw()">Update</button>
+  <button onclick="print()">Print</button>
+</div>
+<div class="sign">
+  <h1>Welcome</h1>
+  <p class="kicker">Scan for your guest guide</p>
+  <div id="qr"></div>
+  <p>Wi-Fi · Check-in · House rules · Local tips</p>
+  <small>Point your phone camera at the code</small>
+</div>
+<script>
+  const input = document.getElementById("url");
+  input.value = new URLSearchParams(location.search).get("url") || location.href.replace(/qr\.html.*$/, "");
+  function draw() {
+    const q = qrcode(0, "M");
+    q.addData(input.value.trim());
+    q.make();
+    document.getElementById("qr").innerHTML = q.createImgTag(10, 0);
+  }
+  draw();
+</script>
+</body>
+</html>
