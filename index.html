@@ -97,6 +97,15 @@
   }
   .pill svg { width: 14px; height: 14px; flex: none; stroke: #fff; fill: none; stroke-width: 2; opacity: .7; }
   .speed { margin-top: 22px; font-size: 13px; color: var(--muted); }
+  .speed a { color: var(--accent); font-weight: 500; display: inline-block; padding: 8px 0; margin: -8px 0; }
+  .ring.sm { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid #d8cbbb; display: grid; place-items: center; margin: 0 auto 14px; }
+  .ring.sm svg { width: 26px; height: 26px; stroke: #b9a891; stroke-width: 1.4; fill: none; }
+  .wifi-note { font-size: 15px; margin: 0 auto 20px; max-width: 320px; }
+  .steps { text-align: left; max-width: 320px; margin: 0 auto; }
+  .step { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-top: 1px solid var(--line); }
+  .step:first-child { border-top: 0; }
+  .step .num { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 600; }
+  .step p { font-size: 15px; padding-top: 2px; }
 
   .gallery { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -18px 14px; padding: 0 18px; scrollbar-width: none; }
   .gallery::-webkit-scrollbar { display: none; }
@@ -197,8 +206,7 @@ const CONFIG = {
   hostPhone: "",                    // TODO e.g. "+1 206 555 0123" (leave blank to hide call/text buttons)
   airbnbUrl: "https://www.airbnb.com/rooms/53690611",
 
-  wifiNetwork: "YourNetworkName",   // TODO
-  wifiPassword: "YourPassword",     // TODO
+  // Wi-Fi network/password are intentionally NOT published here; they're on the printed welcome sheet.
   wifiSpeed: "625 Mbps",
 
   checkInTime: "4:00 PM",           // TODO confirm
@@ -279,18 +287,22 @@ const header = (kicker, title, img) =>
    ${img ? `<img class="photo" src="${img}" alt="" loading="lazy">` : ""}`;
 
 const SECTIONS = [
-  { id: "wifi", icon: "wifi", title: "Wi-Fi", sub: "Network and password", render: () => `
+  { id: "wifi", icon: "wifi", title: "Wi-Fi", sub: "How to connect", render: () => `
     <div class="section"><a href="#home" class="back">${svg("back")} Home</a>
       <div class="arch" style="margin-top:14px">
         <div class="ring">${svg("wifi")}</div>
         <h2 class="serif">Free Wifi</h2>
       </div>
       <div class="creds">
-        <p class="label">Network</p>
-        <button class="pill" data-copy="${CONFIG.wifiNetwork}">${CONFIG.wifiNetwork} ${svg("copy")}</button>
-        <p class="label">Password</p>
-        <button class="pill" data-copy="${CONFIG.wifiPassword}">${CONFIG.wifiPassword} ${svg("copy")}</button>
-        <p class="speed">Blazing fast · ${CONFIG.wifiSpeed}<br>Tap to copy</p>
+        <div class="ring sm">${svg("shield")}</div>
+        <p class="label">For your security</p>
+        <p class="wifi-note">The Wi-Fi network name and password are not shown online. You'll find them on the <b>Guest Welcome Sheet</b> inside the home.</p>
+        <div class="steps">
+          <div class="step"><span class="num">1</span><p>Find the <b>Guest Welcome Sheet</b> at the property.</p></div>
+          <div class="step"><span class="num">2</span><p>Open your phone's camera and <b>scan the Wi-Fi QR code</b>.</p></div>
+          <div class="step"><span class="num">3</span><p>Tap <b>Join</b> and you're connected — no typing needed.</p></div>
+        </div>
+        <p class="speed">Blazing fast · ${CONFIG.wifiSpeed}<br>Can't find the sheet? <a href="#contact">Contact us</a>.</p>
       </div>
     </div>` },
 
