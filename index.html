@@ -151,6 +151,9 @@
   /* Before You Leave */
   .leave-step { display: flex; align-items: center; gap: 12px; background: var(--ink); color: #fff; border-radius: 12px; padding: 14px 16px; margin: 6px 0 14px; }
   .leave-step svg { flex: none; width: 24px; height: 24px; stroke: #fff; fill: none; stroke-width: 1.6; }
+  .leave-step.soft { background: var(--soft); color: var(--ink); margin-bottom: 8px; }
+  .leave-step.soft svg { stroke: var(--ink); }
+  .leave-step.soft + .leave-step { margin-top: 0; }
   .leave-step span { font-size: 15px; }
   .card .no-need li { display: flex; align-items: center; gap: 10px; padding: 5px 0; color: var(--ink); }
   .no-need svg { flex: none; width: 20px; height: 20px; padding: 3px; border-radius: 50%; background: var(--soft); stroke: var(--accent); fill: none; stroke-width: 2.4; }
@@ -275,6 +278,9 @@
     .title-card h2 { font-size: 38px; }
     .photo { height: 3in; }
     #p-explore .photo { height: 1.6in; }
+    #p-checkin .photo { height: 2.2in; }
+    .leave-step { padding: 10px 14px; margin: 4px 0 10px; }
+    .card .farewell { font-size: 26px; margin-top: 12px; }
     .card { background: var(--row); break-inside: avoid; padding: 18px 18px 18px 50px; margin-bottom: 12px; }
     .card.plain { background: var(--row); }
     .card h3 { font-size: 16px; }
@@ -389,6 +395,7 @@ const I = {
   door: '<path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="15" cy="12" r=".9"/>',
   nav: '<path d="M3 11 21 3l-8 18-2-8z"/>',
   lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1"/>',
+  bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   house: '<path d="M3 11 12 4l9 7M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
 };
@@ -503,6 +510,7 @@ const SECTIONS = [
       ${card("car", "Parking", `<p>Park in the <b>1st spot at the back of the building</b>. The dedicated spot is 8 ft wide — best for compact vehicles. Free street parking is available for larger cars.</p>`)}
       <img class="photo print-hide" src="${PHOTOS.parkingSpot}" alt="Arrow showing the parking spot behind the building" loading="lazy">
       ${card("scroll", "Before You Leave", `
+        <div class="leave-step soft">${svg("bulb")}<span>Help us save energy — switch off the <b>lights, TVs &amp; AC</b>.</span></div>
         <div class="leave-step">${svg("lock")}<span>Just <b>lock the doors</b> on your way out.</span></div>
         <ul class="no-need">
           <li>${svg("check")} No need to strip the beds</li>
