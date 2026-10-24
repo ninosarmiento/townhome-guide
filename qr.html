@@ -11,14 +11,15 @@
   .controls { max-width: 520px; margin: 0 auto 20px; display: flex; gap: 8px; }
   .controls input { flex: 1; padding: 10px; font-size: 15px; border: 1px solid #ccc; border-radius: 8px; }
   .controls button { padding: 10px 16px; border: 0; border-radius: 8px; background: #2b2825; color: #fff; cursor: pointer; }
-  .sign { width: 5in; min-height: 7in; margin: 0 auto; background: #f7f2ec; padding: .5in; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,.15); }
+  .sign { box-sizing: border-box; width: 5in; height: 7in; margin: 0 auto; background: #f7f2ec; padding: .5in; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .sign h1 { font-family: "Instrument Serif", serif; font-weight: 400; font-size: 64px; margin: 0; line-height: 1; }
   .kicker { letter-spacing: .3em; text-transform: uppercase; font-size: 12px; margin: 10px 0 30px; }
   #qr { background: #fff; padding: 18px; border-radius: 16px; display: inline-block; }
   #qr img { width: 2.6in; height: 2.6in; display: block; image-rendering: pixelated; }
   .sign p { font-size: 15px; margin: 24px 0 6px; }
   .sign small { color: #6d665f; }
-  @media print { body { background: #fff; padding: 0; } .controls { display: none; } .sign { box-shadow: none; } }
+  @media print { @page { size: 5in 7in; margin: 0; } body { background: #fff; padding: 0; margin: 0; } .controls { display: none; } .sign { box-shadow: none; } }
 </style>
 </head>
 <body>
@@ -36,7 +37,8 @@
 </div>
 <script>
   const input = document.getElementById("url");
-  input.value = new URLSearchParams(location.search).get("url") || location.href.replace(/qr\.html.*$/, "");
+  const GUIDE_URL = "https://seattle-modern-townhome.netlify.app/";
+  input.value = new URLSearchParams(location.search).get("url") || GUIDE_URL;
   function draw() {
     const q = qrcode(0, "M");
     q.addData(input.value.trim());
