@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
   :root {
     --bg: #f7f2ec;
@@ -146,6 +148,35 @@
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+  /* Nearby map + list */
+  .places-wrap > .kicker { margin: 10px 0 12px; }
+  .map { height: 320px; border-radius: var(--radius); margin-bottom: 12px; z-index: 0; background: var(--soft); }
+  .chips { display: flex; gap: 8px; overflow-x: auto; margin: 0 -18px 12px; padding: 0 18px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+    border-radius: 999px; padding: 8px 14px; min-height: 40px; font: 500 14px "DM Sans", sans-serif; cursor: pointer; }
+  .chip i { width: 10px; height: 10px; border-radius: 50%; }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .places { list-style: none; background: var(--card); border-radius: var(--radius); padding: 4px 0; margin-bottom: 14px; }
+  .place { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); cursor: pointer; }
+  .place:first-child { border-top: 0; }
+  .place.hide { display: none; }
+  .place.sel { background: var(--row); }
+  .pin { flex: none; width: 26px; height: 26px; border-radius: 50%; color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+  .place .info { flex: 1; min-width: 0; }
+  .place b { display: block; font-weight: 600; font-size: 15px; line-height: 1.3; }
+  .place small { display: block; color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .place .dist { text-align: right; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .place .dist b { color: var(--ink); font-size: 14px; }
+  .place .go { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); }
+  @media (max-width: 360px) { .place { gap: 9px; padding: 11px 10px; } .place .dist { font-size: 12px; } .place b { font-size: 14px; } }
+  .place .go svg { width: 18px; height: 18px; stroke: var(--ink); fill: none; stroke-width: 1.6; }
+  .home-pin { width: 38px; height: 38px; border-radius: 50%; background: var(--ink); border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.35); display: grid; place-items: center; }
+  .home-pin svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 1.8; }
+  .map-pin { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 5px rgba(0,0,0,.35); color: #fff; display: grid; place-items: center; font: 600 11px "DM Sans", sans-serif; }
+  .leaflet-popup-content { font: 14px/1.4 "DM Sans", sans-serif; margin: 12px 14px; }
+  .leaflet-popup-content a.btn { margin-top: 8px; padding: 9px 14px; font-size: 14px; }
+
   @media print {
     @page { size: letter; margin: 0.5in; }
     html, body { background: #fff; }
@@ -176,6 +207,14 @@
     .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; overflow: visible; margin: 0 0 10px; padding: 0; }
     .gallery img { height: 1.5in; }
     .gallery figure:nth-child(n+7) { display: none; }
+    .map, .chips, .place .go { display: none !important; }
+    .places { columns: 2; column-gap: 10px; background: var(--row); padding: 6px 0; }
+    .place { break-inside: avoid; padding: 5px 12px; gap: 8px; display: flex !important; border-top: 0; }
+    .place b { font-size: 12.5px; }
+    .place small, .place .dist { font-size: 11px; }
+    .place .dist b { font-size: 12px; }
+    .pin { width: 20px; height: 20px; font-size: 10px; }
+    .places-wrap { break-before: page; }
     .arch { background: var(--row); padding: 60px 20px 36px; border-radius: 3in 3in 14px 14px; }
     .arch h2 { font-size: 80px; }
     .creds { background: var(--row); padding: 40px 24px; }
@@ -271,6 +310,8 @@ const I = {
   chev: '<path d="m9 5 7 7-7 7"/>',
   back: '<path d="m15 5-7 7 7 7"/>',
   door: '<path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="15" cy="12" r=".9"/>',
+  nav: '<path d="M3 11 21 3l-8 18-2-8z"/>',
+  house: '<path d="M3 11 12 4l9 7M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/>',
 };
 const svg = (k, cls = "") => `<svg class="${cls}" viewBox="0 0 24 24">${I[k]}</svg>`;
 
@@ -283,6 +324,66 @@ const link = (label, q) =>
 // Category searches ("coffee", "restaurants") centered on the townhome.
 const nearby = (label, term) =>
   `<a href="https://www.google.com/maps/search/${encodeURIComponent(term)}/@${CONFIG.lat},${CONFIG.lng},15z" target="_blank" rel="noopener">${label}</a>`;
+
+/* ---------- Nearby places (shown on the Explore map, sorted by distance from the townhome) ---------- */
+const CATS = {
+  coffee:  { label: "Coffee & Bakery", color: "#8a5a3b" },
+  food:    { label: "Restaurants",     color: "#4f5d43" },
+  drinks:  { label: "Breweries & Bars", color: "#b5651d" },
+  treats:  { label: "Sweet Treats",    color: "#b8607a" },
+  grocery: { label: "Grocery & Pharmacy", color: "#3d6b8c" },
+};
+const PLACES = [
+  { cat: "coffee", name: "Gretchen's Place", addr: "5432 Sand Point Way NE", lat: 47.66794, lng: -122.27584 },
+  { cat: "coffee", name: "Willy's Cafe", addr: "7135 Sportsfield Dr NE (Magnuson Park)", lat: 47.68117, lng: -122.2606 },
+  { cat: "coffee", name: "Seattle Sunshine Coffee", addr: "5508 35th Ave NE", lat: 47.66886, lng: -122.29001 },
+  { cat: "coffee", name: "Top Pot Doughnuts", addr: "6855 35th Ave NE", lat: 47.67912, lng: -122.29066 },
+  { cat: "coffee", name: "Grateful Bread Baking Co", addr: "7001 35th Ave NE", lat: 47.6797, lng: -122.29066 },
+  { cat: "coffee", name: "Zoka Coffee", addr: "2901 NE Blakeley St", lat: 47.66608, lng: -122.29762 },
+  { cat: "food", name: "Sand Point Grill", addr: "5412 Sand Point Way NE", lat: 47.66821, lng: -122.2769 },
+  { cat: "food", name: "Uncle Lee's Kitchen", addr: "5408 Sand Point Way NE", lat: 47.66822, lng: -122.27708 },
+  { cat: "food", name: "Magnuson Cafe & Brewery", addr: "7801 62nd Ave NE (Magnuson Park)", lat: 47.68817, lng: -122.26491 },
+  { cat: "food", name: "Mioposto", addr: "3426 NE 55th St · pizza", lat: 47.66864, lng: -122.29046 },
+  { cat: "food", name: "La Villa", addr: "3410 NE 55th St", lat: 47.66862, lng: -122.29091 },
+  { cat: "food", name: "Fogrose", addr: "3338 NE 65th St", lat: 47.67593, lng: -122.29183 },
+  { cat: "food", name: "The Bryant Corner Cafe", addr: "3118 NE 65th St · breakfast", lat: 47.6759, lng: -122.29317 },
+  { cat: "food", name: "Pancita", addr: "5501 30th Ave NE · Mexican", lat: 47.66864, lng: -122.29522 },
+  { cat: "food", name: "Great State Burger", addr: "3600 NE 45th St", lat: 47.66132, lng: -122.28861 },
+  { cat: "food", name: "Din Tai Fung", addr: "2621 NE 46th St (U Village)", lat: 47.66159, lng: -122.29955 },
+  { cat: "drinks", name: "Burke-Gilman Brewing Co", addr: "3626 NE 45th St", lat: 47.66141, lng: -122.28816 },
+  { cat: "drinks", name: "The Duchess Tavern", addr: "2827 NE 55th St", lat: 47.6684, lng: -122.29609 },
+  { cat: "drinks", name: "Ravenna Brewing Co", addr: "5408 26th Ave NE", lat: 47.66833, lng: -122.29917 },
+  { cat: "treats", name: "Molly Moon's Ice Cream", addr: "2615 NE 46th St (U Village)", lat: 47.66167, lng: -122.2995 },
+  { cat: "treats", name: "Frankie & Jo's", addr: "4619 Village Terrace NE (U Village)", lat: 47.6621, lng: -122.29866 },
+  { cat: "grocery", name: "Metropolitan Market", addr: "5250 40th Ave NE", lat: 47.66819, lng: -122.28362 },
+  { cat: "grocery", name: "PCC Community Market", addr: "6514 40th Ave NE", lat: 47.67613, lng: -122.28436 },
+  { cat: "grocery", name: "Safeway", addr: "7340 35th Ave NE", lat: 47.6826, lng: -122.2894 },
+  { cat: "grocery", name: "QFC University Village", addr: "2746 NE 45th St", lat: 47.66224, lng: -122.29644 },
+  { cat: "grocery", name: "Katterman's Pharmacy", addr: "5400 Sand Point Way NE", lat: 47.66822, lng: -122.2772 },
+];
+
+const metersFromHome = (lat, lng) => {
+  const R = 6371000, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat - CONFIG.lat), dLng = toRad(lng - CONFIG.lng);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(CONFIG.lat)) * Math.cos(toRad(lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+};
+PLACES.forEach(p => {
+  p.m = metersFromHome(p.lat, p.lng) * 1.3; // straight line -> rough street distance
+  p.mi = p.m / 1609.34;
+  p.travel = p.m <= 1600 ? `${Math.max(1, Math.round(p.m / 80))} min walk` : `${Math.round(p.m / 450) + 2} min drive`;
+});
+PLACES.sort((a, b) => a.m - b.m);
+PLACES.forEach((p, i) => p.n = i + 1);
+
+const dirUrl = p => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin())}&destination=${encodeURIComponent(p.name + ", " + p.addr.split(" (")[0].split(" · ")[0] + ", Seattle, WA")}`;
+const placesHTML = () => PLACES.map(p => `
+  <li class="place" data-cat="${p.cat}" data-n="${p.n}">
+    <span class="pin" style="background:${CATS[p.cat].color}">${p.n}</span>
+    <span class="info"><b>${p.name}</b><small>${p.addr}</small></span>
+    <span class="dist"><b>${p.mi.toFixed(1)} mi</b>${p.travel}</span>
+    <a class="go" href="${dirUrl(p)}" target="_blank" rel="noopener" aria-label="Directions to ${p.name}">${svg("nav")}</a>
+  </li>`).join("");
 const tel = s => s.replace(/[^\d+]/g, "");
 
 const card = (icon, title, body) =>
@@ -389,19 +490,16 @@ const SECTIONS = [
         <li>${link("Green Lake", "Green Lake Park, Seattle")} · 15 min</li>
         <li>${link("Pike Place Market", "Pike Place Market, Seattle")} · 7 mi</li>
         <li>${link("Space Needle", "Space Needle, Seattle")} · 20 min</li></ul>`)}
-      ${card("fork", "Eat &amp; Drink", `<ul>
-        <li>${link("Magnuson Cafe &amp; Brewery", "Magnuson Cafe & Brewery, Seattle")} · in the park</li>
-        <li>${link("University Village restaurants", "University Village, Seattle")} · 8 min</li>
-        <li>${nearby("Coffee near the home", "coffee")}</li>
-        <li>${nearby("Restaurants near the home", "restaurants")}</li>
-        <li>${nearby("Bakeries near the home", "bakery")}</li>
-        <li>${nearby("Bars &amp; pubs near the home", "bars")}</li></ul>
-        <p class="note">Links open Google Maps from the townhome, so you'll see distance and travel time.</p>`)}
-      ${card("cart", "Groceries &amp; Essentials", `<ul>
-        <li>${link("Metropolitan Market Sand Point", "Metropolitan Market Sand Point, Seattle")}</li>
-        <li>${link("QFC University Village", "QFC University Village, Seattle")}</li>
-        <li>${nearby("Grocery stores near the home", "grocery store")}</li>
-        <li>${nearby("Pharmacies near the home", "pharmacy")}</li></ul>`)}
+      <div class="places-wrap">
+        <p class="kicker">Eat, drink &amp; shop nearby</p>
+        <div class="chips" id="chips">
+          <button class="chip on" data-cat="all">All</button>
+          ${Object.entries(CATS).map(([k, c]) => `<button class="chip" data-cat="${k}"><i style="background:${c.color}"></i>${c.label}</button>`).join("")}
+        </div>
+        <div class="map" id="map" role="img" aria-label="Map of places near the townhome"></div>
+        <ul class="places" id="places">${placesHTML()}</ul>
+        <p class="note" style="text-align:center">Distances are measured from the townhome. Travel times are estimates.<span class="print-hide"><br>Tap a place to see it on the map, or the arrow for directions.</span></p>
+      </div>
     </div>` },
 
   { id: "rules", icon: "scroll", title: "House Rules", sub: "For a pleasant stay", render: () => `
@@ -450,7 +548,58 @@ function route() {
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p === page));
   document.body.classList.remove("open");
   window.scrollTo(0, 0);
+  if (page.id === "p-explore") initMap();
 }
+
+/* ---------- Explore map ---------- */
+let map, markers = {};
+function initMap() {
+  if (!window.L) return;               // Leaflet failed to load: list still works
+  if (map) { setTimeout(() => map.invalidateSize(), 50); return; }
+  map = L.map("map", { scrollWheelZoom: false, tap: true }).setView([CONFIG.lat, CONFIG.lng], 14);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  L.marker([CONFIG.lat, CONFIG.lng], {
+    icon: L.divIcon({ className: "", html: `<div class="home-pin">${svg("house")}</div>`, iconSize: [38, 38], iconAnchor: [19, 19] }),
+    zIndexOffset: 1000, title: "The townhome"
+  }).addTo(map).bindPopup(`<b>${CONFIG.propertyName}</b><br>You are here`);
+  PLACES.forEach(p => {
+    markers[p.n] = L.marker([p.lat, p.lng], {
+      icon: L.divIcon({ className: "", html: `<div class="map-pin" style="background:${CATS[p.cat].color}">${p.n}</div>`, iconSize: [24, 24], iconAnchor: [12, 12] }),
+      title: p.name
+    }).addTo(map).bindPopup(`<b>${p.name}</b><br><small>${p.addr}</small><br>${p.mi.toFixed(1)} mi · ${p.travel}
+      <a class="btn" href="${dirUrl(p)}" target="_blank" rel="noopener">Directions</a>`);
+    markers[p.n].on("click", () => highlight(p.n));
+  });
+  fitTo("all");
+}
+function fitTo(cat) {
+  if (!map) return;
+  const pts = PLACES.filter(p => cat === "all" || p.cat === cat).map(p => [p.lat, p.lng]);
+  map.fitBounds(L.latLngBounds([[CONFIG.lat, CONFIG.lng], ...pts]), { padding: [24, 24], maxZoom: 16 });
+}
+function highlight(n) {
+  document.querySelectorAll(".place").forEach(li => li.classList.toggle("sel", li.dataset.n == n));
+}
+document.getElementById("chips").addEventListener("click", e => {
+  const c = e.target.closest(".chip"); if (!c) return;
+  const cat = c.dataset.cat;
+  document.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c));
+  document.querySelectorAll(".place").forEach(li => li.classList.toggle("hide", cat !== "all" && li.dataset.cat !== cat));
+  if (map) {
+    PLACES.forEach(p => { const show = cat === "all" || p.cat === cat; show ? markers[p.n].addTo(map) : markers[p.n].remove(); });
+    map.closePopup(); fitTo(cat);
+  }
+});
+document.getElementById("places").addEventListener("click", e => {
+  if (e.target.closest(".go")) return;   // directions button opens Google Maps
+  const li = e.target.closest(".place"); if (!li || !map) return;
+  const m = markers[li.dataset.n];
+  highlight(li.dataset.n);
+  document.getElementById("map").scrollIntoView({ behavior: "smooth", block: "center" });
+  map.setView(m.getLatLng(), 16); m.openPopup();
+});
 addEventListener("hashchange", route);
 route();
 
