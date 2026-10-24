@@ -166,6 +166,7 @@
     .title-card { background: var(--row); }
     .title-card h2 { font-size: 38px; }
     .photo { height: 3in; }
+    #p-explore .photo { height: 1.6in; }
     .card { background: var(--row); break-inside: avoid; padding: 18px 18px 18px 50px; margin-bottom: 12px; }
     .card.plain { background: var(--row); }
     .card h3 { font-size: 16px; }
@@ -275,7 +276,13 @@ const svg = (k, cls = "") => `<svg class="${cls}" viewBox="0 0 24 24">${I[k]}</s
 
 const mapsQuery = () => encodeURIComponent(CONFIG.address || `${CONFIG.lat},${CONFIG.lng}`);
 const gmaps = q => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-const link = (label, q) => `<a href="${gmaps(q)}" target="_blank" rel="noopener">${label}</a>`;
+const origin = () => CONFIG.address || `${CONFIG.lat},${CONFIG.lng}`;
+// Named places open directions starting at the townhome (shows distance + travel time).
+const link = (label, q) =>
+  `<a href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin())}&destination=${encodeURIComponent(q)}" target="_blank" rel="noopener">${label}</a>`;
+// Category searches ("coffee", "restaurants") centered on the townhome.
+const nearby = (label, term) =>
+  `<a href="https://www.google.com/maps/search/${encodeURIComponent(term)}/@${CONFIG.lat},${CONFIG.lng},15z" target="_blank" rel="noopener">${label}</a>`;
 const tel = s => s.replace(/[^\d+]/g, "");
 
 const card = (icon, title, body) =>
@@ -384,13 +391,17 @@ const SECTIONS = [
         <li>${link("Space Needle", "Space Needle, Seattle")} · 20 min</li></ul>`)}
       ${card("fork", "Eat &amp; Drink", `<ul>
         <li>${link("Magnuson Cafe &amp; Brewery", "Magnuson Cafe & Brewery, Seattle")} · in the park</li>
-        <li>${link("University Village restaurants", "restaurants University Village Seattle")}</li>
-        <li>${link("Coffee nearby", "coffee near Sand Point Way NE Seattle")}</li>
-        <li>${link("Restaurants nearby", "restaurants near Laurelhurst Seattle")}</li></ul>`)}
+        <li>${link("University Village restaurants", "University Village, Seattle")} · 8 min</li>
+        <li>${nearby("Coffee near the home", "coffee")}</li>
+        <li>${nearby("Restaurants near the home", "restaurants")}</li>
+        <li>${nearby("Bakeries near the home", "bakery")}</li>
+        <li>${nearby("Bars &amp; pubs near the home", "bars")}</li></ul>
+        <p class="note">Links open Google Maps from the townhome, so you'll see distance and travel time.</p>`)}
       ${card("cart", "Groceries &amp; Essentials", `<ul>
         <li>${link("Metropolitan Market Sand Point", "Metropolitan Market Sand Point, Seattle")}</li>
         <li>${link("QFC University Village", "QFC University Village, Seattle")}</li>
-        <li>${link("Pharmacy nearby", "pharmacy near Sand Point Way NE Seattle")}</li></ul>`)}
+        <li>${nearby("Grocery stores near the home", "grocery store")}</li>
+        <li>${nearby("Pharmacies near the home", "pharmacy")}</li></ul>`)}
     </div>` },
 
   { id: "rules", icon: "scroll", title: "House Rules", sub: "For a pleasant stay", render: () => `
