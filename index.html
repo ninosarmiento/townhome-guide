@@ -341,10 +341,9 @@ const PHOTOS = {
   bath:     IMG("9776a184-9102-4019-ab86-0fd9553d41a4"),
   workspace:IMG("6a701371-11ed-44ea-a40a-5577a4d802cd"),
   laundry:  IMG("7c89ed11-7b76-44f8-bb3e-4e69fc3db1f7"),
-  exterior: IMG("f8d6ae25-2e59-41b6-9b5e-47b227e4cce0"),
-  exterior2:IMG("50997a24-d788-4062-82ce-f67e6ec01de9"),
+  // Exterior photos showing door numbers are intentionally not used (privacy).
   parking:  IMG("c14bc0c8-6880-44be-8808-e7f52ecd61f2"),
-  extra:    "https://a0.muscache.com/im/pictures/ae3d2ae9-39d7-490e-8ec2-79d429ee7b72.jpg?im_w=960",
+  parkingSpot: "https://a0.muscache.com/im/pictures/ae3d2ae9-39d7-490e-8ec2-79d429ee7b72.jpg?im_w=960",
 };
 
 const I = {
@@ -485,14 +484,14 @@ const SECTIONS = [
     </div>` },
 
   { id: "checkin", icon: "key", title: "Check In/Out", sub: "Arrival and departure", render: () => `
-    ${header("Check In / Out", "Arrival &amp; Departure", PHOTOS.exterior)}
+    ${header("Check In / Out", "Arrival &amp; Departure", PHOTOS.primary)}
       ${card("clock", "Times", `<ul>
         <li>Check-in · <b>after ${CONFIG.checkInTime}</b></li>
         <li>Checkout · <b>before ${CONFIG.checkOutTime}</b></li></ul>
         <p class="note">Need an early check-in or late checkout? Message us — we'll do our best.</p>`)}
       ${card("door", "Self Check-in", `<p>The home has a smart lock for easy self check-in.</p><p>${CONFIG.doorCodeNote}</p>`)}
       ${card("car", "Parking", `<p>Park in the <b>1st spot at the back of the building</b>. The dedicated spot is 8 ft wide — best for compact vehicles. Free street parking is available for larger cars.</p>`)}
-      <img class="photo print-hide" src="${PHOTOS.parking}" alt="Parking spot behind the building" loading="lazy">
+      <img class="photo print-hide" src="${PHOTOS.parkingSpot}" alt="Arrow showing the parking spot behind the building" loading="lazy">
       ${card("scroll", "Before You Leave", `<ul>
         <li>· Load and start the dishwasher</li>
         <li>· Take out trash &amp; recycling</li>
@@ -546,7 +545,7 @@ const SECTIONS = [
     </div>` },
 
   { id: "explore", icon: "map", title: "Explore the Area", sub: "Eat, see and do", render: () => `
-    ${header("Explore the Area", "Discover", PHOTOS.exterior2)}
+    ${header("Explore the Area", "Discover", PHOTOS.kitchen)}
       ${card("tree", "Outdoors", `<ul>
         <li>${link("Magnuson Park", "Warren G. Magnuson Park, Seattle")} · 5 min walk</li>
         <li>${link("Lake Washington beach", "Magnuson Park Swimming Beach, Seattle")} · in Magnuson Park</li>
